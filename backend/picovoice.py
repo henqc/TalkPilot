@@ -2,6 +2,8 @@ from faster_whisper import WhisperModel
 from pvrecorder import PvRecorder
 from dotenv import load_dotenv
 from TTS.api import TTS
+from backend.testing import *
+import asyncio
 import pvporcupine
 import sounddevice as sd
 import soundfile as sf
@@ -20,17 +22,18 @@ CHANNELS = 1
 SILENCE_THRESHOLD = 30
 MAX_SILENCE_DURATION = 3.0
 
-# Initialize Porcupine with ppn and model
+# Initialize Porcupine, Whisper, and TTS Models
 porcupine = pvporcupine.create(
     access_key=pico_key,
     keyword_paths=["backend/models/Hey-Talk-Pilot_en_mac_v3_0_0.ppn"],
     model_path="backend/models/porcupine_params.pv"
 )
-
-# Whisper model for transcription
 whisper_model = WhisperModel("base.en", compute_type="int8")
+tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False)
 
-def record_until_silence():
+
+# Record user input until user stops talking
+def record():
     print("Recording started.")
 
     buffer = []
@@ -68,21 +71,26 @@ def record_until_silence():
         print(f"Saved audio to {tmpfile.name}")
         return tmpfile.name
 
-    
+# Transcribe audio file from path to text
 def transcribe_audio(path):
     segments, _ = whisper_model.transcribe(path)
     return " ".join(segment.text.strip() for segment in segments)
 
-tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False)
+# TTS method to create audio file
+def audio_tts(input):
+    tts.tts_to_file(text=input, file_path="backend/output.wav")
 
-def audio_tts(response):
-    tts.tts_to_file(text=response, file_path="backend/output.wav")
-
+# TTS method to play audio file
 def play_audio(file_path):
     data, fs = sf.read(file_path, dtype='float32')
     sd.play(data, fs)
     sd.wait() 
+    
+# # AI request routing agent
+# def route_request(input):
+    
 
+# Method to start Talk Pilot wake word listen
 def start_listening():
     global latest_transcription
 
@@ -95,19 +103,21 @@ def start_listening():
             pcm = recorder.read()
             keyword_index = porcupine.process(pcm)
             if keyword_index >= 0:
-                print("🚀 Trigger word detected")
-                audio_path = record_until_silence()
+                print("Trigger word detected")
+                audio_path = record()
+                print(audio_path)
                 start = time.time()
                 latest_transcription = transcribe_audio(audio_path)
-                print(f"Transcription: {latest_transcription}")
-                audio_tts(latest_transcription)
+                final_transcription = asyncio.run(run_agent(latest_transcription))
+                audio_tts(final_transcription)
                 print(f"Took {time.time() - start:.2f} seconds")
                 play_audio("backend/output.wav")
 
     except KeyboardInterrupt:
-        print("🛑 Stopped by user")
+        print("Stopped by user")
 
     finally:
         recorder.stop()
         recorder.delete()
         porcupine.delete()
+    
