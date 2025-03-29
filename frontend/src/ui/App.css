@@ -6,7 +6,6 @@
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-/* Common styles */
 .landing-container,
 .product-container {
   width: 100%;
@@ -43,8 +42,7 @@
   z-index: 1;
 }
 
-.content,
-.product-content {
+.content {
   position: relative;
   z-index: 2;
   text-align: center;
@@ -54,7 +52,6 @@
   align-items: center;
 }
 
-/* Landing page styles */
 .title {
   font-size: 120px;
   font-weight: 700;
@@ -98,76 +95,111 @@
   transform: scale(0.98);
 }
 
-/* Product page styles */
-.product-container {
-  padding-top: 80px; /* Added extra padding at the top */
+.product-container .grid-background {
+  opacity: 0.3;
 }
 
-.product-content {
+.product-panel {
+  background: linear-gradient(
+    to bottom right,
+    rgba(46, 122, 216, 0.85),
+    rgba(21, 101, 192, 0.85)
+  );
+  border-radius: 20px;
   width: 100%;
-  max-width: 800px;
-  height: 100%;
+  max-width: 900px;
+  min-height: 500px;
+  padding: 30px;
   position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
 }
 
 .back-button {
   position: absolute;
-  top: -60px; /* Moved further up */
-  left: 0;
+  top: 20px;
+  left: 20px;
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
   border: none;
   color: white;
   padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
   transition: all 0.2s ease;
+  z-index: 10;
 }
 
 .back-button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.product-layout {
+  display: flex;
+  flex: 1;
+  align-items: center;
+}
+
+.left-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 20px;
+}
+
+.right-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-left: 20px;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  align-items: center;
+  justify-content: center;
 }
 
 .mic-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 60px;
 }
 
 .mic-button {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
-  background: linear-gradient(to right bottom, #3a8eff, #1565c0);
-  border: none;
+  background: linear-gradient(to right bottom, #0a4da2, #041e40);
+  border: 3px solid rgba(255, 255, 255, 0.3);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   position: relative;
-  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .mic-button svg {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   transition: all 0.3s ease;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
 }
 
 .mic-button:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 25px rgba(21, 101, 192, 0.6);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
 }
 
 .mic-button.active {
   background: linear-gradient(to right bottom, #ff3a3a, #c01515);
-  box-shadow: 0 6px 20px rgba(192, 21, 21, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   animation: pulse 1.5s infinite;
 }
 
@@ -211,49 +243,94 @@
 
 .mic-status {
   font-size: 18px;
+  color: white;
+  font-weight: 500;
+}
+
+.timer-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.timer-display span {
+  font-size: 16px;
   color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 5px;
+}
+
+.time-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 10px 15px;
+  border-radius: 10px;
+  width: 180px;
+  text-align: center;
+  font-family: monospace;
+  letter-spacing: 1px;
 }
 
 .sliders-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 30px;
-  margin-top: 20px;
-  width: 100%;
-}
-
-.slider-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
   width: 100%;
   max-width: 400px;
 }
 
-.slider-group label {
-  font-size: 16px;
-  color: rgba(255, 255, 255, 0.8);
-  align-self: flex-start;
-  margin-left: 10px;
-}
-
-.slider-with-value {
+.slider-group {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
+}
+
+.slider-group label {
+  font-size: 16px;
+  color: white;
+  text-align: center;
   width: 100%;
+}
+
+.slider-with-value {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.slider-container {
+  position: relative;
+  width: 100%;
+  height: 8px;
 }
 
 .horizontal-slider {
   -webkit-appearance: none;
   width: 100%;
   height: 8px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.2);
   outline: none;
   border-radius: 4px;
+  position: relative;
+  z-index: 2;
+}
+
+.horizontal-slider::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: var(--value, 0%);
+  background: white;
+  border-radius: 4px 0 0 4px;
+  z-index: 1;
 }
 
 .horizontal-slider::-webkit-slider-thumb {
@@ -262,28 +339,34 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #3a8eff;
+  background: white;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(58, 142, 255, 0.5);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 3;
 }
 
 .horizontal-slider::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #3a8eff;
+  background: white;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(58, 142, 255, 0.5);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 3;
 }
 
 .slider-value {
   font-size: 14px;
+  margin-top: 10px;
   color: white;
-  background: rgba(58, 142, 255, 0.3);
+  background: rgba(0, 0, 0, 0.2);
   padding: 4px 8px;
   border-radius: 10px;
   min-width: 40px;
   text-align: center;
+  align-self: center;
 }
 
 @media (max-width: 768px) {
@@ -300,8 +383,35 @@
     font-size: 16px;
   }
 
-  .slider-group {
-    max-width: 300px;
+  .product-layout {
+    flex-direction: column;
+  }
+
+  .left-section {
+    padding-right: 0;
+    padding-bottom: 30px;
+  }
+
+  .right-section {
+    padding-left: 0;
+    padding-top: 30px;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .mic-button {
+    width: 120px;
+    height: 120px;
+  }
+
+  .mic-button svg {
+    width: 50px;
+    height: 50px;
+  }
+
+  .time-value {
+    font-size: 24px;
+    width: 160px;
   }
 }
 
@@ -319,6 +429,10 @@
     font-size: 15px;
   }
 
+  .product-panel {
+    padding: 20px;
+  }
+
   .mic-button {
     width: 100px;
     height: 100px;
@@ -329,7 +443,8 @@
     height: 40px;
   }
 
-  .slider-group {
-    max-width: 250px;
+  .time-value {
+    font-size: 20px;
+    width: 150px;
   }
 }
