@@ -3,7 +3,7 @@ import path from "path";
 
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({
-    width: 1000,
+    width: 1500,
     height: 1000,
   });
 
