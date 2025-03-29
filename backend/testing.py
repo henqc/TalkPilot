@@ -4,7 +4,7 @@ from browser_use.browser.context import BrowserContext
 from browser_use.browser.context import BrowserContextConfig
 import asyncio
 from dotenv import load_dotenv
-from backend.picovoice import audio_tts, play_audio
+from picovoice import audio_tts, play_audio
 
 load_dotenv()
 
