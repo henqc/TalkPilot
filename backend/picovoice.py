@@ -90,10 +90,20 @@ def play_audio(file_path):
 # def route_request(input):
     
 
+# Initialize resources at startup
+def initialize_resources():
+    from backend.testing import init_browser
+    init_browser()
+
 # Method to start Talk Pilot wake word listen
 def start_listening():
     global latest_transcription
-
+    
+    # Initialize resources
+    initialize_resources()
+    
+    from backend.testing import loop
+    
     recorder = PvRecorder(device_index=-1, frame_length=porcupine.frame_length)
     recorder.start()
     print("Listening for 'Hey Talk Pilot'...")
@@ -108,19 +118,32 @@ def start_listening():
                 print("\n \n \n \n  Hi1 \n \n \n \n \n")
                 start = time.time()
                 print("\n \n \n \n  Hi1.5 \n \n \n \n \n")
+                
+                # Transcribe audio
                 latest_transcription = transcribe_audio(audio_path)
                 print("\n \n \n \n  Hi2 \n \n \n \n \n")
-                final_transcription = asyncio.run(run_agent(latest_transcription))
+                
+                # Run the agent in the existing event loop
+                final_transcription = loop.run_until_complete(run_agent(latest_transcription))
                 print("\n \n \n \n  Hi3 \n \n \n \n \n")
+                
                 audio_tts(final_transcription)
                 print(f"Took {time.time() - start:.2f} seconds")
                 play_audio("backend/output.wav")
-
+                
+                # Add a small delay to ensure resources are freed properly
+                time.sleep(0.5)
+                
     except KeyboardInterrupt:
         print("Stopped by user")
-
+    except Exception as e:
+        print(f"An error occurred: {e}")
     finally:
+        # Cleanup
         recorder.stop()
         recorder.delete()
         porcupine.delete()
-    
+        
+        # Clean up browser resources
+        from backend.testing import cleanup_resources
+        cleanup_resources()
