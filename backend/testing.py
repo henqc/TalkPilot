@@ -55,7 +55,9 @@ async def main():
 
     input("Press Enter to close the browser...")
     await browser.close()
-    print(result)
+    print("final result from agent code", result)
+    audio_tts(result)
+    play_audio("backend/output.wav")
 
 
 asyncio.run(main())
