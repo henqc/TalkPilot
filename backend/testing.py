@@ -18,6 +18,8 @@ from dotenv import load_dotenv
 
 
 async def run_agent(transcript):
+    print('\n \n \n \n agent received transcript: ', transcript)
+    
     load_dotenv()
     
     try:
