@@ -1,18 +1,20 @@
+"use client";
+
+import { useState } from "react";
 import "./App.css";
+import LandingPage from "./LandingPage";
+import ProductPage from "./ProductPage";
 
 function App() {
+  const [currentPage, setCurrentPage] = useState("landing");
+
   return (
-    <div className="landing-container">
-      <div className="grid-background"></div>
-      <div className="content">
-        <h1 className="title">Talk Pilot</h1>
-        <p className="subtitle">
-          Empowering users to transform thoughts into actions
-          <br />
-          with voice commands
-        </p>
-      </div>
-      <button className="get-started-button">Get Started</button>
+    <div className="app">
+      {currentPage === "landing" ? (
+        <LandingPage onGetStarted={() => setCurrentPage("product")} />
+      ) : (
+        <ProductPage onBack={() => setCurrentPage("landing")} />
+      )}
     </div>
   );
 }
