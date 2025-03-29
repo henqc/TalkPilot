@@ -21,8 +21,8 @@ pico_key = os.getenv("PICO_KEY")
 # Mic threshold settings
 SAMPLE_RATE = 16000
 CHANNELS = 1
-SILENCE_THRESHOLD = 5
-MAX_SILENCE_DURATION = 3.0
+# SILENCE_THRESHOLD = 5
+# MAX_SILENCE_DURATION = 3
 
 # Initialize Porcupine, Whisper, OpenAI Models
 porcupine = pvporcupine.create(
@@ -35,7 +35,7 @@ whisper_model = WhisperModel("base.en", compute_type="int8")
 openai_agent = OpenAI()
 
 # Record user input until user stops talking
-def record():
+def record(sound_threshold, silence_duration):
     print("Recording started.")
 
     buffer = []
@@ -52,15 +52,21 @@ def record():
         volume = np.linalg.norm(indata) * 10
         buffer.append(indata.copy())
 
-        if volume < SILENCE_THRESHOLD:
+        if volume < sound_threshold:
             grace_counter += 1
+
+            # Only start the timer if grace has been exceeded AND the timer hasn't already started
             if grace_counter > grace_limit and silence_start_time is None:
                 silence_start_time = time.time()
         else:
+            # Reset grace + timer on any sound detected
+            if grace_counter > 0 or silence_start_time is not None:
+                print("Voice detected again. Resetting grace and silence timer.")
             grace_counter = 0
             silence_start_time = None
 
-        if silence_start_time and time.time() - silence_start_time > MAX_SILENCE_DURATION:
+        # Final silence check — if timer has been running too long, stop
+        if silence_start_time and time.time() - silence_start_time > silence_duration:
             print("Silence detected. Recording ended.")
             stream_closed = True
 
@@ -130,7 +136,7 @@ def initialize_resources():
     init_browser()
 
 # Method to start Talk Pilot wake word listen
-def start_listening():
+def start_listening(sound_threshold, silence_duration):
     global transcription
     
     # Initialize resources
@@ -148,7 +154,7 @@ def start_listening():
             keyword_index = porcupine.process(pcm)
             if keyword_index >= 0:
                 print("Trigger word detected")
-                audio_path = record()
+                audio_path = record(sound_threshold, silence_duration)
                 start = time.time()
                 transcription = transcribe_audio(audio_path)
                 

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from threading import Thread
+from pydantic import BaseModel
 import time
 
 from backend.picovoice import start_listening
@@ -8,10 +9,14 @@ from backend.picovoice import start_listening
 
 app = FastAPI()
 
+class user_settings(BaseModel):
+    sound_threshold: int
+    silence_duration: int
+
 @app.get("/listen")
-def listen():
+def listen(data: user_settings):
     def run():
-        start_listening()
+        start_listening(data.sound_threshold, data.silence_duration)
 
     thread = Thread(target=run)
     thread.start()
