@@ -49,15 +49,10 @@ agent = Agent(
     # controller=controller,
 )
 
-async def main():
+async def run_agent(transcript):
     history = await agent.run()
     result = history.final_result()
+    return result
 
-    input("Press Enter to close the browser...")
+async def close_browser():
     await browser.close()
-    print("final result from agent code", result)
-    audio_tts(result)
-    play_audio("backend/output.wav")
-
-
-asyncio.run(main())
