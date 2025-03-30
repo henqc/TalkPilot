@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import time
 
 from backend.picovoice import start_listening
+from backend.testing import cleanup_resources
 
 # To run: uvicorn backend.server:app --reload
 
@@ -13,7 +14,7 @@ class user_settings(BaseModel):
     sound_threshold: int
     silence_duration: int
 
-@app.get("/listen")
+@app.post("/listen")
 def listen(data: user_settings):
     def run():
         start_listening(data.sound_threshold, data.silence_duration)
@@ -21,3 +22,7 @@ def listen(data: user_settings):
     thread = Thread(target=run)
     thread.start()
     return {"status": "Listening started"}
+
+@app.get("/end")
+def end():
+    cleanup_resources()

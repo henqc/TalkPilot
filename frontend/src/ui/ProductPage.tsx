@@ -43,6 +43,33 @@ function ProductPage({ onBack }: ProductPageProps) {
     if (!micActive) {
       setTimeElapsed(0);
       setMilliseconds(0);
+
+      const data = {
+        "sound_threshold": soundThreshold,
+        "silence_duration": silenceDuration
+      };
+
+      fetch('http://127.0.0.1:8000/listen', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+    } else {
+      fetch('http://127.0.0.1:8000/end', {
+        method: 'GET',
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
     }
     setMicActive(!micActive);
   };
