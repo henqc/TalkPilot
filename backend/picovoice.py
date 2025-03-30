@@ -116,8 +116,8 @@ def route_request(input):
                 "role": "system",
                 "content": (
                     "You're an intent router. Your job is to classify the user's message into one of two categories:\n"
-                    "- 'request' if the user wants to take an action, like opening a website, searching something, or controlling an app.\n"
-                    "- 'query' if the user is just asking a question or having a conversation.\n\n"
+                    "- 'request' if the user wants to take an action that can be performed on a web browser, like opening a website, searching something, or controlling an app.\n"
+                    "- 'query' if the user wants to have a conversation.\n\n"
                     "Respond with only one word: 'request' or 'query'. No explanation."
                 )
             },
