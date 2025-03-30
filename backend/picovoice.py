@@ -36,6 +36,7 @@ openai_agent = OpenAI()
 
 # Record user input until user stops talking
 def record(sound_threshold, silence_duration):
+    play_audio("backend/audio/uh_huh.wav")
     print("Recording started.")
 
     buffer = []
@@ -107,6 +108,7 @@ def play_audio(file_path):
     
 # AI request routing agent
 def route_request(input):
+    play_audio("backend/audio/on_it.wav")
     completion = openai_agent.chat.completions.create(
         model="gpt-4o",
         messages=[
