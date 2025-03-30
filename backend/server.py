@@ -4,7 +4,7 @@ from threading import Thread
 from pydantic import BaseModel
 import time
 
-from backend.picovoice import start_listening, stop_listening  # Add this import
+from backend.picovoice import start_listening, stop_listening
 from backend.testing import cleanup_resources
 
 app = FastAPI()
@@ -33,7 +33,7 @@ def listen(data: user_settings):
 
 @app.get("/end")
 def end():
-    return {"status": "Listening stopped"}
+    # return {"status": "Listening stopped"}
     global listen_thread
     
     # Signal the thread to stop
@@ -45,5 +45,7 @@ def end():
     
     # Clean up resources
     cleanup_resources()
+    
+    stop_listening()
     
     return {"status": "Listening stopped"}

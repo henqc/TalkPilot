@@ -216,7 +216,8 @@ def start_listening(sound_threshold, silence_duration):
         print("Stopped by user")
     except Exception as e:
         print(f"An error occurred: {e}")
-    finally:
+    
+    def stop_listening():
         # Cleanup
         recorder.stop()
         recorder.delete()
