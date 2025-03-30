@@ -11,6 +11,7 @@ import sounddevice as sd
 import soundfile as sf
 import numpy as np
 import tempfile
+import random
 import time
 import os
 import threading
@@ -116,7 +117,8 @@ def play_audio(file_path):
     
 # AI request routing agent
 def route_request(input):
-    play_audio("backend/audio/on_it.wav")
+    audio_choices = ["backend/audio/ok.wav", "backend/audio/on_it.wav", "backend/audio/sure.wav"]
+    play_audio(random.choice(audio_choices))
     completion = openai_agent.chat.completions.create(
         model="gpt-4o",
         messages=[

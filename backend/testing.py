@@ -62,7 +62,7 @@ async def run_agent(transcript):
     )
     
     try:
-        history = await agent.run()
+        history = await agent.run(10)
         result = history.final_result()
         return result
     except Exception as e:
