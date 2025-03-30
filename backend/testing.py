@@ -11,9 +11,15 @@ browser = None
 browser_context = None
 loop = None
 
-# Initialize everything
+# In testing.py
 def init_browser():
     global browser, browser_context, loop
+    
+    # Clean up old resources if they exist
+    if loop and loop.is_closed():
+        loop = None
+        browser = None
+        browser_context = None
     
     # Create event loop if it doesn't exist
     if loop is None:

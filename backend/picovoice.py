@@ -13,6 +13,14 @@ import numpy as np
 import tempfile
 import time
 import os
+import threading
+
+stop_flag = threading.Event()
+
+def stop_listening():
+    """Signal the listening thread to stop"""
+    global stop_flag
+    stop_flag.set()
 
 # Load environment variables
 load_dotenv()
@@ -36,7 +44,6 @@ openai_agent = OpenAI()
 
 # Record user input until user stops talking
 def record(sound_threshold, silence_duration):
-    play_audio("backend/audio/uh_huh.wav")
     print("Recording started.")
 
     buffer = []
@@ -48,6 +55,7 @@ def record(sound_threshold, silence_duration):
     grace_limit = 25
 
     def audio_callback(indata, frames, timing_info, status):
+        # play_audio("backend/audio/uh_huh.wav")
         nonlocal silence_start_time, stream_closed, grace_counter
 
         volume = np.linalg.norm(indata) * 10
@@ -139,7 +147,10 @@ def initialize_resources():
 
 # Method to start Talk Pilot wake word listen
 def start_listening(sound_threshold, silence_duration):
-    global transcription
+    global transcription, stop_flag
+    
+    # Reset the stop flag
+    stop_flag.clear()
     
     # Initialize resources
     initialize_resources()
@@ -151,7 +162,7 @@ def start_listening(sound_threshold, silence_duration):
     print("Listening for 'Hey Talk Pilot'...")
 
     try:
-        while True:
+        while not stop_flag.is_set():  # Check the flag
             pcm = recorder.read()
             keyword_index = porcupine.process(pcm)
             if keyword_index >= 0:
@@ -164,6 +175,13 @@ def start_listening(sound_threshold, silence_duration):
                 route_res = route_request(transcription)
                 
                 if route_res == "request":
+                    # Check if the loop is closed before using it
+                    from backend.testing import loop, init_browser
+                    if loop.is_closed():
+                        # Reinitialize if the loop is closed
+                        init_browser()
+                        from backend.testing import loop  # Get the new loop
+                    
                     final_transcription = loop.run_until_complete(run_agent(transcription))
                 elif route_res == "query":
                     completion = openai_agent.chat.completions.create(
@@ -193,7 +211,7 @@ def start_listening(sound_threshold, silence_duration):
                 
                 # Add a small small delay to make sure everything is processed
                 time.sleep(0.5)
-                
+                    
     except KeyboardInterrupt:
         print("Stopped by user")
     except Exception as e:
@@ -203,7 +221,3 @@ def start_listening(sound_threshold, silence_duration):
         recorder.stop()
         recorder.delete()
         porcupine.delete()
-        
-        # Clean up browser resources
-        from backend.testing import cleanup_resources
-        cleanup_resources()
